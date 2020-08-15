@@ -25,21 +25,21 @@ def authorise():
 
     return response.json()
 
-def read_playlist(access_token, playlist_id):
-    response = requests.get(f"https://api.spotify.com/v1/playlists/{playlist_id}", headers={"Authorization": "Bearer " + access_token})
+def get_playlist_tracks_object(access_token, url):
+    response = requests.get(url, headers={"Authorization": "Bearer " + access_token})
 
     if not response.ok:
-        print(f"ERROR read_playlist: status code {response.status_code}")
+        print(f"ERROR get_playlist_track__object: status code {response.status_code}")
         print(response.json())
         exit(1)
 
     return response.json()
 
-def extract_songs(playlist_object):
-    songs = []
+def extract_songs(access_token, url):
+    playlist_tracks_object = get_playlist_tracks_object(access_token, url)
 
-    for s in playlist_object["tracks"]["items"]:
-        # songs.append(s["track"]["id"])
+    songs = []
+    for s in playlist_tracks_object["items"]:
         artists = []
         artist_names = []
         for a in s["track"]["artists"]:
@@ -58,7 +58,11 @@ def extract_songs(playlist_object):
 
         songs.append(details)
 
-    return songs
+    more_songs = []
+    if playlist_tracks_object["next"]:
+        more_songs = extract_songs(access_token, playlist_tracks_object["next"])
+
+    return songs + more_songs
 
 def ms_to_mins(ms):
     secs = int(ms / 1000)
@@ -70,18 +74,18 @@ def ms_to_mins(ms):
 
     return f"{mins}:{secs}"
 
-def print_playlist(playlist_object):
-    songs = extract_songs(playlist_object)
+def print_playlist(access_token, url):
+    songs = extract_songs(access_token, url)
 
-    for s in songs:
-        print(f'{s["id"]} {s["name"]}: {s["artist_names"]} -- from -- {s["album_name"]} --- {ms_to_mins(s["duration_ms"])}')
+    for idx, s in enumerate(songs):
+        print(f'{idx}: {s["id"]} {s["name"]}: {s["artist_names"]} -- from -- {s["album_name"]} --- {ms_to_mins(s["duration_ms"])}')
 
-def show_exact_duplicates(playlist_object):
+def show_exact_duplicates(access_token, url):
     # O(N)-ish
 
     print("\nFinding exact duplicates...")
 
-    songs = extract_songs(playlist_object)
+    songs = extract_songs(access_token, url)
     seen = {}
 
     for s in songs:
@@ -103,7 +107,7 @@ def intersection(list_1, list_2):
     return [x for x in list_1 if x in list_2]
 
 def check_similar_song(song1, song2):
-    buzzwords = ["remix", "acoustic"]
+    buzzwords = ["remix", "acoustic", "live"]
 
     # Check song name is similar
     if song1["name"] not in song2["name"] and song2["name"] not in song1["name"]:
@@ -127,12 +131,12 @@ def check_similar_song(song1, song2):
 
     return True
 
-def show_similar_duplicates(playlist_object):
+def show_similar_duplicates(access_token, url):
     # O(N^2)-ish
 
     print("\nFinding similar duplicates...")
 
-    songs = extract_songs(playlist_object)
+    songs = extract_songs(access_token, url)
     seen = {}
 
     for idx, s1 in enumerate(songs):
@@ -162,6 +166,8 @@ def show_similar_duplicates(playlist_object):
 
                 print(f'{i}: {songs[i]["name"]} by {songs[i]["artist_names"]} -- from -- {songs[i]["album_name"]}')
 
+    print ("\n", len(songs), "songs compared in this playlist\n")
+
 ################################################################################
 #                                                                              #
 #                                   MAIN                                       #
@@ -179,12 +185,13 @@ print(playlist_id)
 
 # 1laBVRwIsV64Tdwel1J8oS
 access_token = authorise()["access_token"]
-playlist_object = read_playlist(access_token, playlist_id)
 
-print_playlist(playlist_object)
+url = f"https://api.spotify.com/v1/playlists/{playlist_id}/tracks"
+
+print_playlist(access_token, url)
 
 # Find exact duplicates
-show_exact_duplicates(playlist_object)
+show_exact_duplicates(access_token, url)
 
 # Find similar duplicates
-show_similar_duplicates(playlist_object)
+show_similar_duplicates(access_token, url)
