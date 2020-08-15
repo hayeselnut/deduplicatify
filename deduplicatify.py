@@ -77,7 +77,9 @@ def print_playlist(playlist_object):
         print(f'{s["id"]} {s["name"]}: {s["artist_names"]} -- from -- {s["album_name"]} --- {ms_to_mins(s["duration_ms"])}')
 
 def show_exact_duplicates(playlist_object):
-    # O(N)
+    # O(N)-ish
+
+    print("\nFinding exact duplicates...")
 
     songs = extract_songs(playlist_object)
     seen = {}
@@ -91,14 +93,74 @@ def show_exact_duplicates(playlist_object):
             continue
 
         # FOUND DUPLICATE, LOOP THROUGH PLAYLIST AND SHOW ALL DUPLICATES
-        print(f"\nDuplicate found for {s['name']} by {s['artist_names']}")
-        for i in range(len(songs)):
-            if s["id"] == songs[i]["id"]:
-                print(f'{i}: {songs[i]["name"]} by {songs[i]["artist_names"]} -- from -- {songs[i]["album_name"]}')
+        print(f"\nExact duplicate found for {s['name']} by {s['artist_names']}")
+        for i, song in enumerate(songs):
+            if s["id"] == song["id"]:
+                print(f'{i}: {song["name"]} by {song["artist_names"]} -- from -- {song["album_name"]}')
                 seen[s["id"]] = 1
 
+def intersection(list_1, list_2):
+    return [x for x in list_1 if x in list_2]
+
+def check_similar_song(song1, song2):
+    buzzwords = ["remix", "acoustic"]
+
+    # Check song name is similar
+    if song1["name"] not in song2["name"] and song2["name"] not in song1["name"]:
+        # songs names are not similar
+        return False
+
+    # Check artist ids
+    if not intersection(song1["artists"], song2["artists"]):
+        # no common artists
+        return False
+
+    # Check time
+    if abs(song1["duration_ms"] - song2["duration_ms"]) > 10000:
+        # not within 10 sec threshold
+        return False
+
+    for bw in buzzwords:
+        if bw in song1["name"].lower() and bw not in song2["name"] or bw in song2["name"].lower() and bw not in song1["name"]:
+            # Remix version
+            return False
+
+    return True
+
 def show_similar_duplicates(playlist_object):
-    # stub
+    # O(N^2)-ish
+
+    print("\nFinding similar duplicates...")
+
+    songs = extract_songs(playlist_object)
+    seen = {}
+
+    for idx, s1 in enumerate(songs):
+        if idx in seen:
+            continue
+
+        similars = []
+
+        for i, s2 in enumerate(songs):
+            if i <= idx:
+                continue
+
+            if check_similar_song(s1, s2):
+                similars.append(i)
+
+        # FOUND DUPLICATE, LOOP THROUGH PLAYLIST AND SHOW ALL DUPLICATES
+        if similars:
+            seen[idx] = True
+            print(f"\nSimilar duplicates:")
+            print(f"{idx}: {s1['name']} by {s1['artist_names']} -- from -- {s1['album_name']}")
+            for i in similars:
+                if i in seen:
+                    print(f"ERROR ?? LOGIC ERROR?? {i} already in seen!! {songs[i]['name']} by {songs[i]['artist_names']} -- from -- {songs[i]['album_name']}")
+                    exit(1)
+
+                seen[i] = True
+
+                print(f'{i}: {songs[i]["name"]} by {songs[i]["artist_names"]} -- from -- {songs[i]["album_name"]}')
 
 ################################################################################
 #                                                                              #
@@ -108,10 +170,10 @@ def show_similar_duplicates(playlist_object):
 
 
 if len(sys.argv) != 2:
-    print("USAGE: py deduplicatify.py <playlist_id>")
+    print("USAGE: py deduplicatify.py <spotify url for playlist>")
     exit(1)
 
-playlist_id = sys.argv[1]
+playlist_id = sys.argv[1].split(":")[2]
 
 print(playlist_id)
 
@@ -122,8 +184,7 @@ playlist_object = read_playlist(access_token, playlist_id)
 print_playlist(playlist_object)
 
 # Find exact duplicates
-print("\nFinding exact duplicates...")
 show_exact_duplicates(playlist_object)
 
 # Find similar duplicates
-show_similar_duplicates(play_list_object)
+show_similar_duplicates(playlist_object)
