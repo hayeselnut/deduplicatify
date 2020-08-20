@@ -225,6 +225,12 @@ function showDuplicates(songs, duplicates) {
     });
 }
 
+$("#dedup-txtbox").on("keydown", function(event) {
+    if (event.which == 13) { // Enter key
+        $("#dedup-btn").click();
+    }
+})
+
 $("#dedup-btn").on("click", async function() {
     $("#dedup-results").css("display", "block");
     $("#dedup-desc").slideUp(1000);
