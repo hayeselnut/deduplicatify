@@ -41,7 +41,11 @@ function updatePlaylistMetadata(p) {
         $("#playlist-name").html(p.name);
         $("#playlist-owner").html(p.owner.display_name);
         $("#playlist-desc").html(p.description);
-        $("#playlist-length").html(p.tracks.total + " songs");
+        $("#playlist-length").html(p.tracks.total + " song");
+
+        if (p.tracks.total > 1) {
+            $("#playlist-length").append("s");
+        }
 
         if (p.images.length) {
             $("#playlist-img").attr("src", p.images[0].url);
@@ -175,13 +179,14 @@ function getDuplicates(songs) {
 }
 
 function showInvalidPlaylistLink() {
+    $("#remove-dupes-btn").css("display", "none");
     $("#playlist-metadata").fadeOut(500, function() {
-        $("#sim-songs").css("padding-top", "100px").html("Invalid Spotify playlist link").fadeIn(500);
+        $("#sim-songs").css("padding-top", "100px").html('<h3 class="display-msg">Invalid Spotify playlist link 😒</h3>').fadeIn(500);
     });
 }
 
 function showPlaylist(playlistId) {
-    $.ajax({
+    return $.ajax({
         type: "GET",
         url: "https://api.spotify.com/v1/playlists/" + playlistId,
         headers: {"Authorization": "Bearer " + ACCESS_TOKEN},
@@ -206,9 +211,9 @@ function showDuplicates(songs, duplicates) {
 
             artists = artists.filter(a => songDetails.artist_names.includes(a));
         }
-        $("#sim-songs").append(`<h2><strong>${name}</strong> by ${artists.join(", ")}</h2>`);
+        $("#sim-songs").append(`<p><strong>${name}</strong> by ${artists.join(", ")}</p>`);
 
-        var appendSetOfDupes = '<div class="set-of-dupes">';
+        var appendSetOfDupes = '<div class="set-of-dupes flexbox">';
         setOfDuplicates.forEach(function(dupeId) {
             appendSetOfDupes += printSong(songs[dupeId]);
         });
@@ -232,6 +237,7 @@ $("#dedup-txtbox").on("keydown", function(event) {
 })
 
 $("#dedup-btn").on("click", async function() {
+    $("#remove-dupes-btn").css("display", "none");
     $("#dedup-results").css("display", "block");
     $("#dedup-desc").slideUp(1000);
     $("#sim-songs").css("display", "none").html("Loading...");
@@ -246,7 +252,7 @@ $("#dedup-btn").on("click", async function() {
     showPlaylist(playlistId);
 
     // Get songs from playlist
-    var p = await getTracks("https://api.spotify.com/v1/playlists/" + playlistId + "/tracks");
+    var p = await getTracks(`https://api.spotify.com/v1/playlists/${playlistId}/tracks`);
     var songs = getSongs(p);
 
     while (p.next) {
@@ -261,16 +267,19 @@ $("#dedup-btn").on("click", async function() {
 
     if (!duplicates.length) {
         // No duplicates found
-        $("#sim-songs").css("padding-top", "1000px").html("No duplicates found!");
+        $("#remove-dupes-btn").css("display", "none");
+        $("#sim-songs").css("padding-top", "1000px").html('<h3 class="display-msg">No duplicates found! 😁</h3>');
     } else {
+        // Duplicates found
         if (duplicates.length == 1) {
-            $("#sim-songs").html(`<h1>${duplicates.length} set of duplicates were found:</h1>`);
+            $("#sim-songs").html(`<h2>${duplicates.length} set of duplicates were found:</h2>`);
         } else {
-            $("#sim-songs").html(`<h1>${duplicates.length} sets of duplicates were found:</h1>`);
-
+            $("#sim-songs").html(`<h2>${duplicates.length} sets of duplicates were found:</h2>`);
         }
 
         // Show duplicates
         showDuplicates(songs, duplicates);
+
+        $("#remove-dupes-btn").delay(1000).fadeIn(1000);
     }
 });

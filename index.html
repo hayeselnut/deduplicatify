@@ -11,20 +11,20 @@
     <body class="gotham">
         <!-- header nav section footer -->
         <header>
-            <nav class="navbar">
+            <nav>
                 <ul>
-                    <li><a href="https://hayeselnut.github.io">Home</a></li>
+                    <li><a href="https://hayeselnut.github.io"><strong>Home</strong></a></li>
                 </ul>
             </nav>
 
-            <section class="deduplicatify-cover">
-                <div>
+            <div class="cover">
+                <div class="flexbox">
                     <h1 class="title">.deduplicatify_</h1>
                     <img src="assets/logo_green.svg"/>
                 </div>
 
 
-                <section class="input">
+                <div class="input">
                     <!-- <p>Ignore:</p>
                     <input id="ignore-remix" type="checkbox" value="remix">
                     <label for="ignore-remix">remixes</label><br>
@@ -35,21 +35,22 @@
 
                     <input id="dedup-txtbox" type="text" placeholder="Enter your Spotify playlist link">
                     <br/>
-                    <button class="button" id="dedup-btn">Detect duplicates</button>
-                </section>
-            </section>
+                    <button class="spotify-button" id="dedup-btn">Detect duplicates</button>
+                </div>
+            </div>
         </header>
 
         <section class="description" id="dedup-desc">
             <p>
-                Deduplicatify detects any duplicate songs in a Spotify playlist even if they are from different albums.
+                <strong>Deduplicatify</strong> detects any duplicate songs in a Spotify playlist even if they are from different albums.
                 The detection algorithm will label two songs as duplicates if their:
-                <ul>
-                    <li>song names are similar</li>
-                    <li>artists are the same</li>
-                    <li>song length is within 2.5 seconds of each other.</li>
-                </ul>
             </p>
+            <ul>
+                <li>song names are similar</li>
+                <li>artists are the same</li>
+                <li>song length is within 2.5 seconds of each other.</li>
+            </ul>
+
             <p>
                 The algorithm also does not label remixed, live and acoustic versions as a duplicate of their original counterpart.
             </p>
@@ -62,11 +63,11 @@
             <img src="assets/copy_playlist_link.png" alt="how to copy Spotify playlist link"/>
         </section>
 
-        <section id="dedup-results">
-            <div class="playlist-metadata" id="playlist-metadata">
-                <div class="playlist-info">
-                    <h1 id="playlist-name"></h1>
-                    <h2 id="playlist-owner"></h2>
+        <section class="results" id="dedup-results">
+            <div class="flexbox" id="playlist-metadata">
+                <div id="playlist-info">
+                    <h2 id="playlist-name"></h2>
+                    <h3 id="playlist-owner"></h3>
                     <p id="playlist-length"></p>
                     <p id="playlist-desc"></p>
                 </div>
@@ -74,8 +75,10 @@
                     <img id="playlist-img" src=""/>
                 </div>
             </div>
-            <div class="similar-songs" id="sim-songs"></div>
-            <button class="button" id="remove-dupes-btn">Remove duplicates (doesn't do anything lol)</button>
+            <div id="sim-songs"></div>
+            <div class="flexbox">
+                <button class="spotify-button" id="remove-dupes-btn">Remove duplicates (this button doesnt do anything lol)</button>
+            </div>
         </section>
 
         <footer>
