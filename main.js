@@ -147,7 +147,7 @@ function getDuplicates(songs) {
 }
 
 function showInvalidPlaylistLink() {
-    $("#remove-dupes-btn").css("display", "none");
+    // $("#remove-dupes-btn").css("display", "none");
     $("#playlist-metadata").fadeOut(500, function() {
         $("#sim-songs").css("padding-top", "100px").html('<h3 class="display-msg">Invalid Spotify playlist link 😒</h3>').fadeIn(500);
     });
@@ -279,7 +279,7 @@ $("#dedup-txtbox").on("keydown", function(event) {
 })
 
 $("#dedup-btn").on("click", async function() {
-    $("#remove-dupes-btn").css("display", "none");
+    // $("#remove-dupes-btn").css("display", "none");
     $("#dedup-results").css("display", "block");
     $("#dedup-desc").slideUp(1000);
     $("#sim-songs").css("display", "none").html("Loading...");
@@ -309,7 +309,7 @@ $("#dedup-btn").on("click", async function() {
 
     if (!duplicates.length) {
         // No duplicates found
-        $("#remove-dupes-btn").css("display", "none");
+        // $("#remove-dupes-btn").css("display", "none");
         $("#sim-songs").css("padding-top", "1000px").html('<h3 class="display-msg">No duplicates found! 😁</h3>');
     } else {
         // Duplicates found
@@ -322,16 +322,16 @@ $("#dedup-btn").on("click", async function() {
         // Show duplicates
         showDuplicates(songs, duplicates);
 
-        $("#remove-dupes-btn").delay(1000).fadeIn(1000);
+        // $("#remove-dupes-btn").delay(1000).fadeIn(1000);
     }
 });
 
-$("#remove-dupes-btn").on("click", async function() {
-    implicitGrantFlow();
+// $("#remove-dupes-btn").on("click", async function() {
+//     implicitGrantFlow();
 
-    // Remove duplicates
+//     // Remove duplicates
 
-    // If already have user token, try that
+//     // If already have user token, try that
 
-    // If fails or don't have user token, request for authorisation
-})
+//     // If fails or don't have user token, request for authorisation
+// })
