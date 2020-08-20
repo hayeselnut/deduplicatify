@@ -1,4 +1,2 @@
-config.py
-*.DS_Store
-*.vscode
-*__pycache__
+node_modules
+scripts/config.js

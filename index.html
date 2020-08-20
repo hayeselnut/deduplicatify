@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>.deduplicatify_</title>
+        <link rel="icon" href="assets/logo_black.svg">
+        <link rel="stylesheet" href="hayeselnut.github.io/styles.css">
+    </head>
+
+    <body class="gotham">
+        <!-- header nav section footer -->
+        <header>
+            <nav class="navbar">
+                <ul>
+                    <li><a href="index.html">Home</a></li>
+                </ul>
+            </nav>
+
+            <section class="deduplicatify-cover">
+                <div>
+                    <h1 class="title">.deduplicatify_</h1>
+                    <img src="assets/logo_green.svg"/>
+                </div>
+
+
+                <section class="input">
+                    <!-- <p>Ignore:</p>
+                    <input id="ignore-remix" type="checkbox" value="remix">
+                    <label for="ignore-remix">remixes</label><br>
+                    <input id="ignore-live" type="checkbox" value="live">
+                    <label for="ignore-live">live performances</label><br>
+                    <input id="ignore-acoustic" type="checkbox" value="acoustic">
+                    <label for="ignore-acoustic">acoustic covers</label><br> -->
+
+                    <input id="dedup-txtbox" type="text" placeholder="Enter your Spotify playlist link">
+                    <br/>
+                    <button class="button" id="dedup-btn">Detect duplicates</button>
+                </section>
+            </section>
+        </header>
+
+        <section class="description" id="dedup-desc">
+            <p>
+                Deduplicatify detects any duplicate songs in a Spotify playlist even if they are from different albums.
+                The detection algorithm will label two songs as duplicates if their:
+                <ul>
+                    <li>song names are similar</li>
+                    <li>artists are the same</li>
+                    <li>song length is within 2.5 seconds of each other.</li>
+                </ul>
+            </p>
+            <p>
+                The algorithm also does not label remixed, live and acoustic versions as a duplicate of their original counterpart.
+            </p>
+            <p>
+                You can copy a Spotify playlist link as shown below. Enter yours below to detect any duplicate songs in your playlist.
+            </p>
+            <p>
+                <em>FUTURE FUNCTIONALITY: button to delete duplicates (requires login details)</em>
+            </p>
+            <img src="assets/copy_playlist_link.png" alt="how to copy Spotify playlist link"/>
+        </section>
+
+        
+
+        <section id="dedup-results">
+            <div class="playlist-metadata" id="playlist-metadata">
+                <div class="playlist-info">
+                    <h1 id="playlist-name"></h1>
+                    <h2 id="playlist-owner"></h2>
+                    <p id="playlist-length"></p>
+                    <p id="playlist-desc"></p>
+                </div>
+                <div class="playlist-artwork">
+                    <img id="playlist-img" src=""/>
+                </div>
+            </div>
+            <div class="similar-songs" id="sim-songs"></div>
+            <button class="button" id="remove-dupes-btn">Remove duplicates (doesn't do anything lol)</button>
+        </section>
+
+        <footer>
+            <ul>
+                <li>GitHub</li>
+                <li>LinkedIn</li>
+            </ul>
+        </footer>
+
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        <script src="scripts/main.js"></script>
+    </body>
+</html>
