@@ -16,11 +16,11 @@ function clientCredentialsFlow() {
         url: "https://accounts.spotify.com/api/token",
         data: {"grant_type": GRANT_TYPE},
         headers: {"Authorization": "Basic " + SPOTIFY_SECRET},
-        success: function(response) {
+        success: response => {
             ACCESS_TOKEN = response.access_token;
             console.log("Access Token successfully retrieved:", ACCESS_TOKEN);
         },
-        error: function() {
+        error: () => {
             alert("Could not connect to Spotify API");
         }
     });
@@ -47,7 +47,7 @@ function implicitGrantFlow() {
     // Then retrieve hash from # data area.
 }
 
-$(document).ready(function() {
+$(document).ready(() => {
     clientCredentialsFlow();
 
     if (location.hash) {
@@ -81,7 +81,7 @@ function getPlaylistId(playlistLink) {
 function getSongDetails(song) {
     const artists = [];
     const artist_names = [];
-    song.track.artists.forEach(function(artist) {
+    song.track.artists.forEach(artist => {
         artists.push(artist.id);
         artist_names.push(artist.name);
     });
@@ -98,7 +98,7 @@ function getSongDetails(song) {
 function getSongs(playlist) {
     const songs = [];
 
-    playlist.items.forEach(function(song) {
+    playlist.items.forEach(song => {
         if (song.track) {
             songs.push(getSongDetails(song));
         }
@@ -137,7 +137,7 @@ function getDuplicates(songs) {
             similars.push(i);
             duplicates.push(similars);
 
-            similars.forEach(function(idx) {
+            similars.forEach(idx => {
                 seen[idx] = true;
             });
         }
@@ -148,7 +148,7 @@ function getDuplicates(songs) {
 
 function showInvalidPlaylistLink() {
     // $("#remove-dupes-btn").css("display", "none");
-    $("#playlist-metadata").fadeOut(500, function() {
+    $("#playlist-metadata").fadeOut(500, () => {
         $("#sim-songs").css("padding-top", "100px").html('<h3 class="display-msg">Invalid Spotify playlist link 😒</h3>').fadeIn(500);
     });
 }
@@ -163,8 +163,9 @@ function showPlaylist(playlistId) {
     });
 }
 
+
 function showDuplicates(songs, duplicates) {
-    duplicates.forEach(function(setOfDuplicates) {
+    duplicates.forEach(setOfDuplicates => {
         var songDetails = songs[setOfDuplicates[0]];
         var name = songDetails.name;
         var artists = songDetails.artist_names;
@@ -182,7 +183,7 @@ function showDuplicates(songs, duplicates) {
         $("#sim-songs").append(`<p><strong>${name}</strong> by ${artists.join(", ")}</p>`);
 
         var appendSetOfDupes = '<div class="set-of-dupes flexbox">';
-        setOfDuplicates.forEach(function(dupeId) {
+        setOfDuplicates.forEach(dupeId => {
             appendSetOfDupes += printSong(songs[dupeId]);
         });
         appendSetOfDupes += "</div>";
@@ -203,7 +204,7 @@ function updatePlaylistMetadata(playlist) {
 
     var duration = 500;
 
-    $("#playlist-metadata").fadeOut(duration, function() {
+    $("#playlist-metadata").fadeOut(duration, () => {
         $("#playlist-name").html(playlist.name);
         $("#playlist-owner").html(playlist.owner.display_name);
         $("#playlist-desc").html(playlist.description);
@@ -218,7 +219,7 @@ function updatePlaylistMetadata(playlist) {
         } else {
             $("#playlist-img").attr("src", "assets/blank-playlist.jpg");
         }
-    }).fadeIn(duration, function() {
+    }).fadeIn(duration, () => {
         $("#sim-songs").css("padding-top", "0").fadeIn(duration);
     });
 }
@@ -272,13 +273,13 @@ function printSong(song) {
     return `<iframe src="https://open.spotify.com/embed/track/${song.id}" width=${width} height=${height} frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>`;
 }
 
-$("#dedup-txtbox").on("keydown", function(event) {
+$("#dedup-txtbox").on("keydown", event => {
     if (event.which == 13) { // Enter key
         $("#dedup-btn").click();
     }
 })
 
-$("#dedup-btn").on("click", async function() {
+$("#dedup-btn").on("click", async () => {
     // $("#remove-dupes-btn").css("display", "none");
     $("#dedup-results").css("display", "block");
     $("#dedup-desc").slideUp(1000);
